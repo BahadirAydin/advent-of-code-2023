@@ -6,6 +6,7 @@ use std::fs;
 lazy_static! {
     static ref RE: Regex = Regex::new(r"(\d+)+").unwrap();
     static ref RE_SYM: Regex = Regex::new(r"([^\d.\n])+").unwrap();
+    static ref RE_GEAR: Regex = Regex::new(r"\*").unwrap();
 }
 
 fn part_numbers(input: &str, line_index: usize) -> u32 {
@@ -63,7 +64,65 @@ fn part1(input: &str) -> u32 {
         .sum()
 }
 
+fn find_gears(input: &str, line_index: usize) -> Vec<usize> {
+    let line = input.lines().nth(line_index).unwrap();
+    let mut gears = vec![];
+    for cap in RE_GEAR.captures_iter(line) {
+        if let Some(c) = cap.get(0) {
+            gears.push(c.start());
+        }
+    }
+    gears
+}
+
+fn gear_ratio(input: &str, line_index: usize, gears: Vec<usize>) -> u32 {
+    let line = input.lines().nth(line_index).unwrap();
+    let mut sum = 0;
+    for gear in gears {
+        let start = if gear == 0 { 0 } else { gear - 1 };
+        let end = std::cmp::min(gear + 1, line.len());
+        let mut adjacent_numbers = vec![];
+        for cap in RE.captures_iter(line) {
+            let c = cap.get(1).unwrap();
+            if cmp::max(start, c.start()) <= cmp::min(end, c.end() - 1) {
+                adjacent_numbers.push(c.as_str().parse::<u32>().unwrap());
+            }
+        }
+        if line_index != 0 {
+            let upper_line = input.lines().nth(line_index - 1).unwrap();
+            for cap in RE.captures_iter(upper_line) {
+                let c = cap.get(1).unwrap();
+                if cmp::max(start, c.start()) <= cmp::min(end, c.end() - 1) {
+                    adjacent_numbers.push(c.as_str().parse::<u32>().unwrap());
+                }
+            }
+        }
+        if line_index != input.lines().count() - 1 {
+            let lower_line = input.lines().nth(line_index + 1).unwrap();
+            for cap in RE.captures_iter(lower_line) {
+                let c = cap.get(1).unwrap();
+                if cmp::max(start, c.start()) <= cmp::min(end, c.end() - 1) {
+                    adjacent_numbers.push(c.as_str().parse::<u32>().unwrap());
+                }
+            }
+        }
+        if adjacent_numbers.len() == 2 {
+            sum += adjacent_numbers[0] * adjacent_numbers[1];
+        }
+    }
+    sum
+}
+
+fn part2(input: &str) -> u32 {
+    input
+        .lines()
+        .enumerate()
+        .map(|(i, _)| gear_ratio(input, i, find_gears(input, i)))
+        .sum()
+}
+
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
     println!("Part 1: {}", part1(&input));
+    println!("Part 2: {}", part2(&input));
 }
