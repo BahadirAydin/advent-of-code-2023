@@ -7,10 +7,8 @@ lazy_static! {
 }
 
 fn get_match_count(line: &str) -> u32 {
-    let index = line.find(":").unwrap();
-    let line_ = &line[index + 1..];
-    let winner = line_.split("|").nth(0).unwrap();
-    let my_numbers = line_.split("|").nth(1).unwrap();
+    let winner = line.split("|").nth(0).unwrap();
+    let my_numbers = line.split("|").nth(1).unwrap();
 
     let my_numbers: Vec<u32> = RE_DECK
         .captures_iter(my_numbers)
@@ -18,6 +16,7 @@ fn get_match_count(line: &str) -> u32 {
         .collect();
     RE_DECK
         .captures_iter(winner)
+        .skip(1)
         .map(|cap| cap[0].parse::<u32>().unwrap())
         .filter(|x| my_numbers.contains(x))
         .count() as u32
