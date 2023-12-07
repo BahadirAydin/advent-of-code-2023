@@ -1,22 +1,49 @@
 use std::cmp::Ordering;
+use std::collections::HashMap;
 use std::fs;
 
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord)]
+enum Type {
+    HighCard,
+    OnePair,
+    TwoPair,
+    ThreeOfKind,
+    FullHouse,
+    FourOfKind,
+    FiveOfKind,
+}
 
-fn card_strength(hand: &str) -> i32 {
-    let mut cards: Vec<char> = hand.chars().collect();
-    cards.sort_unstable();
-    let mut counts : Vec<(char, i32)> = vec![];
+fn determine_type(hand: &str) -> Type {
+    let cards: Vec<char> = hand.chars().collect();
+    let mut counts = HashMap::new();
     cards.iter().for_each(|c| {
-        if counts.len() == 0 || counts.last().unwrap().0 != *c {
-            counts.push((*c, 1));
-        } else {
-            counts.last_mut().unwrap().1 += 1;
-        }
+        let count = counts.entry(c).or_insert(0);
+        *count += 1;
     });
-    counts.sort_unstable_by(|(_, c1), (_, c2)| c2.cmp(c1));
-    counts.iter().enumerate()
-        .map(|(i,(_,v))| v*(5 - i as i32 ) )
-        .sum::<i32>()
+    match counts.len() {
+        1 => Type::FiveOfKind,
+        2 => {
+            let mut values: Vec<i32> = counts.values().map(|v| *v).collect();
+            values.sort();
+            match values.last().unwrap() {
+                4 => Type::FourOfKind,
+                3 => Type::FullHouse,
+                _ => panic!("Unexpected value"),
+            }
+        }
+        3 => {
+            let mut values: Vec<i32> = counts.values().map(|v| *v).collect();
+            values.sort();
+            match values.last().unwrap() {
+                3 => Type::ThreeOfKind,
+                2 => Type::TwoPair,
+                _ => panic!("Unexpected value"),
+            }
+        }
+        4 => Type::OnePair,
+        5 => Type::HighCard,
+        _ => panic!("Unexpected value"),
+    }
 }
 
 fn char_strength(c: char, p2: bool) -> i32 {
@@ -30,14 +57,14 @@ fn char_strength(c: char, p2: bool) -> i32 {
     }
 }
 
-fn joker(hand: &str) -> i32 {
-    let mut best_type = card_strength(hand);
+fn joker(hand: &str) -> Type {
+    let mut best_type = determine_type(hand);
     let max_count_char = hand
         .chars()
         .max_by_key(|c| hand.matches(*c).count())
         .unwrap();
     let new_hand = hand.replace(max_count_char, "J");
-    let new_type = card_strength(&new_hand);
+    let new_type = determine_type(&new_hand);
     if new_type > best_type {
         best_type = new_type;
     }
@@ -45,8 +72,8 @@ fn joker(hand: &str) -> i32 {
 }
 
 fn sort(hand1: &str, hand2: &str, part2: bool) -> Ordering {
-    let type1 = if part2 { joker(hand1) } else { card_strength(hand1) };
-    let type2 = if part2 { joker(hand2) } else { card_strength(hand2) };
+    let type1 = if part2 { joker(hand1) } else { determine_type(hand1) };
+    let type2 = if part2 { joker(hand2) } else { determine_type(hand2) };
     if type1.cmp(&type2) != Ordering::Equal {
         type1.cmp(&type2)
     } else {
