@@ -29,9 +29,8 @@ fn part1(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i32 {
 }
 
 fn part2(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i64 {
-    let starts = map.keys().filter(|k| k.ends_with('A')).collect::<Vec<_>>();
-    starts
-        .iter()
+    map.keys()
+        .filter(|k| k.ends_with('A'))
         .map(|s| {
             let mut curr = *s;
             let mut step = 0;
