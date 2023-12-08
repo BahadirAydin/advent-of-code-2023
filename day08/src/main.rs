@@ -30,23 +30,25 @@ fn part1(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i32 {
 
 fn part2(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i64 {
     let starts = map.keys().filter(|k| k.ends_with('A')).collect::<Vec<_>>();
-    let steps = starts.iter().map(|s| {
-        let mut curr = *s;
-        let mut step = 0;
-        let mut pos = 0;
-        while !curr.ends_with('Z') {
-            let (a, b) = map.get(curr).unwrap();
-            if instructions[pos] == 'R' {
-                curr = b;
-            } else {
-                curr = a;
+    starts
+        .iter()
+        .map(|s| {
+            let mut curr = *s;
+            let mut step = 0;
+            let mut pos = 0;
+            while !curr.ends_with('Z') {
+                let (a, b) = map.get(curr).unwrap();
+                if instructions[pos] == 'R' {
+                    curr = b;
+                } else {
+                    curr = a;
+                }
+                pos = (pos + 1) % instructions.len();
+                step += 1;
             }
-            pos = (pos + 1) % instructions.len();
-            step += 1;
-        }
-        step
-    });
-    steps.fold(1, lcm)
+            step
+        })
+        .fold(1, lcm)
 }
 
 fn main() {
