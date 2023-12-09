@@ -1,6 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::fs;
+use std::time::Instant;
 
 lazy_static! {
     static ref RE: Regex = Regex::new(r"(\d)+").unwrap();
@@ -128,15 +129,17 @@ fn part2(input: &str) -> i64 {
         current_ranges = propagate_ranges(current_ranges, layer);
     }
 
-    *(current_ranges
-        .iter()
-        .map(|(start, _)| start)
-        .min()
-        .unwrap())
+    *(current_ranges.iter().map(|(start, _)| start).min().unwrap())
 }
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
-    println!("Part 1: {}", part1(&input));
-    println!("Part 2: {}", part2(&input));
+    let start = Instant::now();
+    let res1 = part1(&input);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
+    let res2 = part2(&input);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }

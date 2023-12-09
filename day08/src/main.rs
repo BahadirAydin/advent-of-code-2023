@@ -3,6 +3,7 @@ use num::integer::lcm;
 use regex::Regex;
 use std::collections::HashMap;
 use std::fs;
+use std::time::Instant;
 
 lazy_static! {
     static ref RE: Regex = Regex::new(r"([A-Z]){3}").unwrap();
@@ -67,6 +68,12 @@ fn main() {
         );
     });
 
-    println!("Part 1: {}", part1(&instructions, &map));
-    println!("Part 2: {}", part2(&instructions, &map));
+    let start = Instant::now();
+    let res1 = part1(&instructions, &map);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
+    let res2 = part2(&instructions, &map);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }

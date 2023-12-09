@@ -1,5 +1,6 @@
 use std::cmp::Ordering;
 use std::fs;
+use std::time::Instant;
 
 
 fn card_strength(hand: &str) -> i32 {
@@ -79,6 +80,12 @@ fn main() {
             (hand.trim(), bid.parse::<i32>().unwrap())
         })
         .collect();
-    println!("Part 1: {}", run(&mut game, false));
-    println!("Part 2: {}", run(&mut game, true));
+    let start = Instant::now();
+    let res1 = run(&mut game, false);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
+    let res2 = run(&mut game, true);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }

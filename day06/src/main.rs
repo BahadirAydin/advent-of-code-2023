@@ -2,6 +2,7 @@ use regex::Regex;
 use roots::find_roots_quadratic;
 use roots::Roots;
 use std::fs;
+use std::time::Instant;
 
 fn parse(input: &str) -> (Vec<i64>, Vec<i64>) {
     let re = Regex::new(r"(\d)+").unwrap();
@@ -55,6 +56,12 @@ fn part2(input: &str) -> i64 {
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
     let (times, distances) = parse(&input);
-    println!("Part 1: {}", part1(times, distances));
-    println!("Part 2: {}", part2(&input));
+    let start = Instant::now();
+    let res1 = part1(times, distances);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
+    let res2 = part2(&input);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }

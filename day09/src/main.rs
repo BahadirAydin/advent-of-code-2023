@@ -1,4 +1,5 @@
 use std::fs;
+use std::time::Instant;
 
 fn go_down(arr: &Vec<i32>) -> Vec<i32> {
     arr.iter()
@@ -47,6 +48,12 @@ fn main() {
                 .collect()
         })
         .collect();
-    println!("Part 1: {}", part1(&numbers));
-    println!("Part 2: {}", part2(&numbers));
+    let start = Instant::now();
+    let res1 = part1(&numbers);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
+    let res2 = part2(&numbers);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }

@@ -1,4 +1,5 @@
 use std::fs;
+use std::time::Instant;
 
 fn part1(input: &str) -> i32 {
     let first_digits: Vec<i32> = input
@@ -43,8 +44,12 @@ fn part2(input: &str) -> i32 {
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
+    let start = Instant::now();
     let res1 = part1(&input);
-    println!("Part 1: {}", res1);
+    let duration = start.elapsed();
+    println!("Part 1: {} took {:#?}", res1, duration);
+    let start = Instant::now();
     let res2 = part2(&input);
-    println!("Part 2: {}", res2);
+    let duration = start.elapsed();
+    println!("Part 2: {} took {:#?}", res2, duration);
 }
