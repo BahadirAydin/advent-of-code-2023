@@ -31,13 +31,13 @@ fn part1(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i32 {
 
 fn part2(instructions: &Vec<char>, map: &HashMap<&str, (&str, &str)>) -> i64 {
     map.keys()
-        .filter(|k| k.ends_with('A'))
-        .map(|s| {
-            let mut curr = *s;
+        .filter(|&k| k.ends_with('A'))
+        .map(|&s| {
+            let mut curr = s;
             let mut step = 0;
             let mut pos = 0;
             while !curr.ends_with('Z') {
-                let (a, b) = map.get(curr).unwrap();
+                let (a, b) = map[curr];
                 if instructions[pos] == 'R' {
                     curr = b;
                 } else {
