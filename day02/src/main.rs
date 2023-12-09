@@ -76,9 +76,10 @@ fn match_info(line: &str) -> Game {
 }
 
 fn is_valid(game: &Game, red: u32, green: u32, blue: u32) -> bool {
-    game.sets
+    !game
+        .sets
         .iter()
-        .all(|set| set.red <= red && set.green <= green && set.blue <= blue)
+        .any(|set| set.red > red || set.green > green || set.blue > blue)
 }
 
 // input values
@@ -86,19 +87,16 @@ const RED: u32 = 12;
 const GREEN: u32 = 13;
 const BLUE: u32 = 14;
 
-fn part1(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| match_info(line))
+fn part1(games: &Vec<Game>) -> u32 {
+    games
+        .iter()
         .filter(|game| is_valid(game, RED, GREEN, BLUE))
-        .map(|game| game.game_id)
-        .sum()
+        .fold(0, |acc, game| acc + game.game_id)
 }
 
-fn part2(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| match_info(line))
+fn part2(games: &Vec<Game>) -> u32 {
+    games
+        .iter()
         .map(|game| {
             let red = game.sets.iter().map(|s| s.red).max().unwrap();
             let green = game.sets.iter().map(|s| s.green).max().unwrap();
@@ -110,12 +108,13 @@ fn part2(input: &str) -> u32 {
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap();
+    let games: Vec<Game> = input.lines().map(|line| match_info(line)).collect();
     let start = Instant::now();
-    let res1 = part1(&input);
+    let res1 = part1(&games);
     let duration = start.elapsed();
     println!("Part 1: {} took {:#?}", res1, duration);
     let start = Instant::now();
-    let res2 = part2(&input);
+    let res2 = part2(&games);
     let duration = start.elapsed();
     println!("Part 2: {} took {:#?}", res2, duration);
 }
