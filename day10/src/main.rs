@@ -1,6 +1,5 @@
 use std::fs;
 use std::time::Instant;
-
 #[derive(Debug, Clone, Copy, PartialEq)]
 struct Point {
     x: usize,
@@ -24,7 +23,6 @@ enum Pipe {
     Horizontal,
     Vertical,
     Ground,
-    Start,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -155,15 +153,13 @@ fn main() {
     input.iter().enumerate().for_each(|(y, line)| {
         line.iter().enumerate().for_each(|(x, c)| {
             map[y][x] = match c {
-                'S' => Pipe::Start,
-                '.' => Pipe::Ground,
                 '|' => Pipe::Vertical,
                 '-' => Pipe::Horizontal,
                 'L' => Pipe::NE,
                 'J' => Pipe::NW,
                 '7' => Pipe::SW,
                 'F' => Pipe::SE,
-                _ => panic!("Unknown pipe"),
+                _ => Pipe::Ground,
             }
         })
     });
