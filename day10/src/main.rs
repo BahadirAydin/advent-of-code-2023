@@ -98,7 +98,6 @@ fn run(map: &Map, start_position: Point) -> (i32, i32) {
     let mut prev_pos = start_position;
     let mut steps = 1;
     let mut area = 0;
-    let mut visited = [[false; SIZE]; SIZE];
     for dir in possible_neighbors {
         let new_pos = dir.from_point(&start_position);
         if is_valid(&pos) {
@@ -108,7 +107,6 @@ fn run(map: &Map, start_position: Point) -> (i32, i32) {
     }
     loop {
         let pipe = map[pos.y][pos.x];
-        visited[pos.y][pos.x] = true;
 
         area += pos.determinant(&prev_pos);
         if pos == start_position {
@@ -117,7 +115,7 @@ fn run(map: &Map, start_position: Point) -> (i32, i32) {
         let possible_neighbors = pipe.possible_neighbors();
         for dir in possible_neighbors {
             let new_pos = dir.from_point(&pos);
-            if new_pos != prev_pos && is_valid(&new_pos) && !visited[new_pos.y][new_pos.x] {
+            if new_pos != prev_pos && is_valid(&new_pos) {
                 prev_pos = pos;
                 pos = new_pos;
                 break;
